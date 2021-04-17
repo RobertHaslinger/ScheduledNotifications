@@ -11,6 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
+using ScheduledNotifications.Jobs;
 
 namespace ScheduledNotifications
 {
@@ -27,6 +31,11 @@ namespace ScheduledNotifications
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            services.AddHostedService<QuartzHostedService>();
+            services.AddSingleton<HelloWorldJob>();
+            services.AddSingleton(new JobSchedule(jobType: typeof(HelloWorldJob), cronExpression: "0/5 * * * * ?"));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
